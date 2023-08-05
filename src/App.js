@@ -1,24 +1,56 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useState} from 'react';
+import About from './components/About';
+import Body from './components/Body';
+import Navbar from './components/Navbar';
+import Alert from './components/Alert';
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 
 function App() {
+  const [mode, setMode] = useState('light');
+  const [title, setTitle] = useState('TextUtils - LightMode');
+  const [alert, setAlert] = useState();
+  document.title = title;
+    let toogleMode=()=> {
+        if(mode === 'light') {
+            setMode('dark');
+            document.body.style.backgroundColor = '#1a2f4e';
+            setTitle('TextUtils - DarkMode')
+            showAlert("Enabled dark mode", "success");
+        }
+        else {
+            setMode('light');
+            document.body.style.backgroundColor = 'white';
+            setTitle('TextUtils - LightMode')
+            showAlert("Enabled light mode", "success");
+        }
+    }
+    const showAlert = (message, type) => {
+      setAlert({
+        msg: message,
+        type: type
+      })
+      setTimeout(()=>{
+        setAlert(null)
+      }, 1500)
+    }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+        <Router>
+          <Navbar mode={mode} toogleMode={toogleMode}/>
+          <Alert alert={alert}/>
+          <div className='container my-3'>
+            <Switch>
+              <Route exact path="/">
+                <Body showAlert={showAlert} mode={mode}/>
+              </Route>
+              <Route path="/about">
+                <About mode={mode}/>
+              </Route>
+            </Switch>
+          </div>
+        </Router>
+    </>
   );
 }
 
